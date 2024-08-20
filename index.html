@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPN Forwarder</title>
+</head>
+<body>
+    <script>
+        // Capturar o IPN enviado para esta página
+        async function forwardIPN() {
+            // Obtendo os dados do IPN
+            const ipnData = await fetch(window.location.href, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Enviar os dados do IPN para o endpoint real
+            fetch('https://getbot.tech/webhook/ipn', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(await ipnData.json())
+            });
+        }
+
+        forwardIPN().then(() => {
+            document.body.innerHTML = "<h1>IPN Forwarded!</h1>";
+        }).catch((error) => {
+            document.body.innerHTML = "<h1>Error forwarding IPN</h1><p>" + error + "</p>";
+        });
+    </script>
+</body>
+</html>
